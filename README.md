@@ -1,59 +1,81 @@
-# AutoflexWeb
+# 🚀 AutoFlex Web (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.3.
+Interface web do sistema desenvolvida em **Angular**, para consumo da API **Java/Spring Boot**.  
+O sistema possui layout corporativo responsivo com sidebar lateral, CRUD completo de matérias-primas e produtos, além da funcionalidade de sugestão de produção baseada no estoque disponível.
 
-## Development server
+---
 
-To start a local development server, run:
+## 📌 Funcionalidades
 
-```bash
-ng serve
-```
+### ✔ Matéria-prima
+- Cadastro
+- Edição
+- Exclusão
+- Listagem
+- Busca por ID
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### ✔ Produtos
+- Cadastro
+- Edição
+- Exclusão
+- Listagem
+- Busca por ID
+- Associação de matérias-primas ao produto (Lista de Materiais / BOM)
 
-## Code scaffolding
+### ✔ Sugestão de Produção
+- Consulta automática na API
+- Exibição em tabela
+- Cálculo de valor total sugerido
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## 🧱 Tecnologias Utilizadas
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- Angular (Standalone Components)
+- Angular Router
+- Angular Reactive Forms
+- Angular Material
+- TypeScript
+- HTML + SCSS
+- Proxy Angular (evitar CORS no desenvolvimento)
 
-```bash
-ng generate --help
-```
+---
 
-## Building
+## 📌 Pré-requisitos
 
-To build the project run:
+- Node.js LTS
+- Angular CLI:
 
-```bash
-ng build
-```
+`npm install -g @angular/cli`
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 🌐 Endpoints Consumidos
 
-## Running unit tests
+### 🧪 Matéria-prima
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+| Método | Endpoint | Descrição |
+|--------|----------|----------|
+| GET | `/api/raw-material` | Listar matérias-primas |
+| GET | `/api/raw-material/{id}` | Buscar matéria-prima por ID |
+| POST | `/api/raw-material` | Cadastrar matéria-prima |
+| PUT | `/api/raw-material/{id}` | Atualizar matéria-prima |
+| DELETE | `/api/raw-material/{id}` | Excluir matéria-prima |
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+### 📦 Produtos
 
-For end-to-end (e2e) testing, run:
+| Método | Endpoint | Descrição |
+|--------|----------|----------|
+| GET | `/api/product` | Listar produtos |
+| GET | `/api/product/{id}` | Buscar produto por ID |
+| POST | `/api/product` | Cadastrar produto |
+| PUT | `/api/product/{id}` | Atualizar produto |
+| DELETE | `/api/product/{id}` | Excluir produto |
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### 💡 Sugestão de Produção
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| Método | Endpoint | Descrição |
+|--------|----------|----------|
+| GET | `/api/production/suggestions` | Obter sugestão de produção baseada no estoque |
