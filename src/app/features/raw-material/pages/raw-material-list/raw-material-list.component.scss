@@ -1,0 +1,40 @@
+.card {
+  padding: 8px;
+  position: relative;
+}
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 12px 0;
+}
+.search {
+  flex: 0 0 500px;
+  width: 300px;
+  max-width: 500px;
+}
+.fab-add {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+}
+.search {
+  flex: 1;
+  min-width: 200px;
+}
+.table-wrap {
+  overflow: auto;
+}
+.empty {
+  padding: 16px;
+  opacity: .7;
+}
+@media (max-width: 600px) {
+  .search {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
+

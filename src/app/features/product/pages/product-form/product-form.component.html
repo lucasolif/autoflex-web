@@ -1,0 +1,91 @@
+<mat-card class="card">
+  <mat-card-title>{{ id ? 'Editar Produto' : 'Cadastrar Produto' }}</mat-card-title>
+
+  <form class="grid" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field appearance="outline">
+      <mat-label>Código</mat-label>
+      <input matInput type="number" formControlName="code" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Preço</mat-label>
+      <input matInput type="number" formControlName="price" placeholder="Ex: 10.50" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-card class="bom span-2" appearance="outlined">
+      <mat-card-title class="bom-title">Matérias-primas do produto</mat-card-title>
+
+      <div class="bom-controls">
+        <mat-form-field appearance="outline" class="rm-select">
+          <mat-label>Matéria-prima</mat-label>
+          <mat-select [formControl]="rawMaterialIdCtrl">
+            @for (rm of rawMaterialsCatalog; track rm.id) {
+              <mat-option [value]="rm.id">
+                {{ rm.id }} - {{ rm.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="qty">
+          <mat-label>Qtd. requerida</mat-label>
+          <input matInput type="number" [formControl]="qtyRequiredCtrl" placeholder="Ex: 2.5" />
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="button"
+                (click)="addRawMaterial()"
+                [disabled]="rawMaterialIdCtrl.invalid || qtyRequiredCtrl.invalid">
+          <mat-icon>add</mat-icon>
+          Adicionar
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table mat-table [dataSource]="rawMaterials" class="mat-elevation-z0">
+          <ng-container matColumnDef="rawMaterialId">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let row">{{ row.rawMaterialId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rawMaterialName">
+            <th mat-header-cell *matHeaderCellDef>Matéria-prima</th>
+            <td mat-cell *matCellDef="let row">{{ row.rawMaterialName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="quantityRequired">
+            <th mat-header-cell *matHeaderCellDef>Qtd. requerida</th>
+            <td mat-cell *matCellDef="let row">{{ row.quantityRequired }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Ações</th>
+            <td mat-cell *matCellDef="let row">
+              <button mat-icon-button type="button"  (click)="removeRawMaterial(row)" title="Remover">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <div class="empty" *ngIf="rawMaterials.length === 0">
+          Nenhuma matéria-prima adicionada.
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="actions span-2">
+      <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+        {{ id ? 'Salvar alterações' : 'Cadastrar' }}
+      </button>
+    </div>
+  </form>
+</mat-card>

@@ -1,0 +1,36 @@
+.card {
+  padding: 12px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+}
+.error {
+  padding: 12px;
+  color: #b00020;
+}
+
+.table-wrap {
+  overflow: auto;
+  margin-top: 12px;
+}
+
+.total {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.04);
+}

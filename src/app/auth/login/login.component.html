@@ -1,0 +1,26 @@
+<div class="wrap">
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="brand">
+      <div class="logo">AF</div>
+      <div class="brand-text">
+        <div class="name">AutoFlex</div>
+        <div class="tag">Acesso ao sistema</div>
+      </div>
+    </div>
+
+    <label>Usuário</label>
+    <input formControlName="username" autocomplete="username" [class.invalid]="form.controls.username.touched && form.controls.username.invalid"/>
+
+    <label>Senha</label>
+    <input type="password" formControlName="password" autocomplete="current-password" [class.invalid]="form.controls.password.touched && form.controls.password.invalid"/>
+
+    <button type="submit" [disabled]="form.invalid || loading">
+      {{ loading ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
+
+  </form>
+</div>
