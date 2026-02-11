@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink  } from '@angular/router';
 import { ProductApi } from '../../../../core/api/product.api';
 import { ProductResponse } from '../../../../core/models/product';
@@ -18,7 +18,7 @@ import { MatTable } from '@angular/material/table';
   selector: 'app-product-list',
   standalone: true,
   imports: [
-    CommonModule, ReactiveFormsModule,
+    FormsModule, CommonModule, ReactiveFormsModule,
     MatCardModule, MatTableModule, MatFormFieldModule, MatInputModule,
     MatIconModule, MatButtonModule, MatSnackBarModule, RouterLink
   ],
@@ -38,17 +38,20 @@ export class ProductListComponent {
   data: ProductResponse[] = [];
   displayedColumns = ['id','code','name','price','actions'];
 
-  search() {
+  onSearch(){
     const trimmed = this.searchId.value.trim();
 
     if (!trimmed) {
-      this.loadPage();
+      this.onLoadPage();
       return;
     }
 
     const id = Number(trimmed);
     if (Number.isNaN(id)) {
-      this.snack.open('Digite um ID numérico válido.', 'OK', { duration: 2500 });
+      this.snack.open('Digite um ID numérico válido.', 'OK', {
+        duration: 2500,
+        verticalPosition: 'top'
+      });
       return;
     }
 
@@ -62,38 +65,54 @@ export class ProductListComponent {
         this.data = [];
         this.table?.renderRows();
         this.cdr.detectChanges();
-        this.snack.open('Nenhum registro encontrado para este ID.', 'OK', { duration: 2500 });
+        this.snack.open('Nenhum registro encontrado para este ID.', 'OK', {
+          duration: 2500,
+          verticalPosition: 'top'
+        });
       }
     });
   }
 
-  clearSearch() {
+  onClearSearch() {
     this.searchId.setValue('');
-    this.loadPage();
+    this.onLoadPage();
   }
 
-  loadPage() {
+  onLoadPage() {
     this.api.list(0, 10, 'name,asc').subscribe({
       next: page => this.data = page.content,
       error: () => this.data = []
     });
   }
 
-  goEdit(row: ProductResponse) {
+  onEdit(row: ProductResponse) {
     this.router.navigate(['/product', 'edit', row.id]);
   }
 
-  delete(row: ProductResponse) {
+  onCommitFocus() {
+    (document.activeElement as HTMLElement | null)?.blur();
+  }
+
+  onDelete(row: ProductResponse) {
     if (!confirm(`Excluir produto ID ${row.id}?`)) return;
 
     this.api.delete(row.id).subscribe({
       next: () => {
-        this.snack.open('Excluído com sucesso', 'OK', { duration: 2500 });
+        this.snack.open('Excluído com sucesso', 'OK', {
+          duration: 2500,
+          verticalPosition: 'top'
+        });
         const currentSearch = this.searchId.value.trim();
-        if (currentSearch) this.clearSearch();
-        else this.loadPage();
+        if (currentSearch) this.onClearSearch();
+        else this.onLoadPage();
       },
-      error: () => this.snack.open('Erro ao excluir', 'OK', { duration: 2500 })
+      error: (err) => {
+        const msg = err?.error?.message || 'Erro ao excluir';
+        this.snack.open(msg, 'OK', {
+          duration: 3000,
+          verticalPosition: 'top'
+        });
+      }
     });
   }
 }

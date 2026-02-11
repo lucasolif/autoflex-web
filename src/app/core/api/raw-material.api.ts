@@ -7,7 +7,7 @@ import { RawMaterialRequest, RawMaterialResponse } from '../models/raw-material'
 @Injectable({ providedIn: 'root' })
 export class RawMaterialApi {
   private http = inject(HttpClient);
-  private base = `${environment.apiUrl}/api/raw-material`;
+  private base = `${environment.apiUrl}/raw-material`;
 
   list(page = 0, size = 10, sort = 'name,asc') {
     const params = new HttpParams()

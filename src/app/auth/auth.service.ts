@@ -13,7 +13,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(req: LoginRequest) {
-    return this.http.post<TokenResponse>(`${environment.apiUrl}/api/auth/login`, req).pipe(
+    return this.http.post<TokenResponse>(`${environment.apiUrl}/auth/login`, req).pipe(
       tap(res => localStorage.setItem(this.KEY, res.accessToken))
     );
   }

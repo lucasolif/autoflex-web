@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { ProductApi } from '../../../../core/api/product.api';
 import { RawMaterialApi } from '../../../../core/api/raw-material.api';
 import { RawMaterialResponse } from '../../../../core/models/raw-material';
@@ -58,29 +57,6 @@ export class ProductFormComponent {
   rawMaterialIdCtrl = new FormControl<number | null>(null, { validators: [Validators.required] });
   qtyRequiredCtrl = new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0.000001)] });
 
-  ngOnInit() {
-    this.rawApi.list(0, 500, 'name,asc').subscribe({
-      next: (page) => this.rawMaterialsCatalog = page.content,
-      error: () => this.rawMaterialsCatalog = []
-    });
-
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = Number(idParam);
-      this.productApi.getById(this.id).subscribe({
-        next: (p: ProductResponse) => {
-          this.form.patchValue({ code: p.code, name: p.name, price: p.price });
-
-          this.rawMaterials = (p.rawMaterials ?? []).map(rm => ({
-            rawMaterialId: rm.rawMaterialId,
-            rawMaterialName: rm.rawMaterialName,
-            quantityRequired: rm.quantityRequired
-          }));
-        }
-      });
-    }
-  }
-
   addRawMaterial() {
     if (this.rawMaterialIdCtrl.invalid || this.qtyRequiredCtrl.invalid) return;
 
@@ -106,7 +82,7 @@ export class ProductFormComponent {
     this.rawMaterials = this.rawMaterials.filter(i => i.rawMaterialId !== item.rawMaterialId);
   }
 
-  save() {
+  onSave() {
     if (this.form.invalid) return;
 
     const base = this.form.getRawValue();
@@ -127,14 +103,23 @@ export class ProductFormComponent {
 
     request$.subscribe({
       next: () => {
-        this.snack.open(this.id ? 'Produto atualizado' : 'Produto cadastrado', 'OK', { duration: 2500 });
+        this.snack.open(this.id ? 'Produto atualizado' : 'Produto cadastrado', 'OK', {
+          duration: 2500,
+          verticalPosition: 'top'
+        });
         this.router.navigate(['/product/list']);
       },
-      error: () => this.snack.open('Erro ao salvar produto', 'OK', { duration: 2500 })
+      error: (err) => {
+        const msg = err?.error?.message || (this.id ? 'Erro ao aturalizar produto' : 'Erro ao salvar produto');
+        this.snack.open(msg, 'OK', {
+          duration: 3000,
+          verticalPosition: 'top'
+        });
+      }
     });
   }
 
-  cancel() {
+  onCancel() {
     this.router.navigate(['/product/list']);
   }
 }

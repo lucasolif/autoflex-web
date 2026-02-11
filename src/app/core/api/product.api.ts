@@ -7,7 +7,7 @@ import { ProductRequest, ProductResponse } from '../models/product';
 @Injectable({ providedIn: 'root' })
 export class ProductApi {
   private http = inject(HttpClient);
-  private base = `${environment.apiUrl}/api/product`;
+  private base = `${environment.apiUrl}/product`;
 
   list(page = 0, size = 10, sort = 'name,asc') {
     const params = new HttpParams()

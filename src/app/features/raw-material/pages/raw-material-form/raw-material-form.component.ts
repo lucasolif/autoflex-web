@@ -36,21 +36,7 @@ export class RawMaterialFormComponent {
     stockQuantity: [0, [Validators.required]]
   });
 
-  ngOnInit() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    if (idParam) {
-      this.id = Number(idParam);
-      this.api.getById(this.id).subscribe({
-        next: (rm) => this.form.patchValue({
-          code: rm.code ?? 0,
-          name: rm.name ?? '',
-          stockQuantity: rm.stockQuantity ?? 0
-        })
-      });
-    }
-  }
-
-  save() {
+  onSave() {
     if (this.form.invalid) return;
 
     const payload = this.form.getRawValue();
@@ -63,16 +49,24 @@ export class RawMaterialFormComponent {
       next: () => {
         this.snack.open(
           this.id ? 'Atualizado com sucesso' : 'Cadastrado com sucesso',
-          'OK',
-          { duration: 2500 }
+          'OK', {
+            duration: 2500,
+            verticalPosition: 'top'
+          }
         );
         this.router.navigate(['/raw-material/list']);
       },
-      error: () => this.snack.open('Erro ao salvar', 'OK', { duration: 2500 })
+      error: (err) => {
+        const msg = err?.error?.message || (this.id ? 'Erro ao aturalizar matéria-prima' : 'Erro ao salvar matéria-prima');
+        this.snack.open(msg, 'OK', {
+          duration: 3000,
+          verticalPosition: 'top'
+        });
+      }
     });
   }
 
-  cancel() {
+  onCancel() {
     this.router.navigate(['/raw-material/list']);
   }
 }

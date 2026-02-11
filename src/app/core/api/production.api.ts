@@ -6,7 +6,7 @@ import { ProductionSuggestionResponse } from '../models/production';
 @Injectable({ providedIn: 'root' })
 export class ProductionApi {
   private http = inject(HttpClient);
-  private base = `${environment.apiUrl}/api/production`;
+  private base = `${environment.apiUrl}/production`;
 
   suggestions() {
     return this.http.get<ProductionSuggestionResponse>(`${this.base}/suggestions`);

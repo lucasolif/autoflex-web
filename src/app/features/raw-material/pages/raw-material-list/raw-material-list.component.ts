@@ -39,17 +39,19 @@ export class RawMaterialListComponent {
   data: RawMaterialResponse[] = [];
   displayedColumns = ['id', 'code', 'name', 'stockQuantity', 'actions'];
 
-  search() {
+  onCearch() {
     const trimmed = this.searchId.value.trim();
 
     if (!trimmed) {
-      this.loadPage();
+      this.onLoadPage();
       return;
     }
 
     const id = Number(trimmed);
     if (Number.isNaN(id)) {
-      this.snack.open('Digite um ID numérico válido.', 'OK', { duration: 2500 });
+      this.snack.open('Digite um ID numérico válido.', 'OK', {
+        duration: 2500,
+        verticalPosition: 'top' });
       return;
     }
 
@@ -63,17 +65,19 @@ export class RawMaterialListComponent {
         this.data = [];
         this.table?.renderRows();
         this.cdr.detectChanges();
-        this.snack.open('Nenhum registro encontrado para este ID.', 'OK', { duration: 2500 });
+        this.snack.open('Nenhum registro encontrado para este ID.', 'OK', {
+          duration: 2500,
+          verticalPosition: 'top' });
       }
     });
   }
 
-  clearSearch() {
+  onClearSearch() {
     this.searchId.setValue('');
-    this.loadPage();
+    this.onLoadPage();
   }
 
-  loadPage() {
+  onLoadPage() {
     this.api.list(0, 10, 'name,asc').subscribe({
       next: page => this.data = page.content,
       error: () => this.data = []
@@ -84,17 +88,30 @@ export class RawMaterialListComponent {
     this.router.navigate(['/raw-material', 'edit', row.id]);
   }
 
-  delete(row: RawMaterialResponse) {
+  onCommitFocus() {
+    (document.activeElement as HTMLElement | null)?.blur();
+  }
+
+  onDelete(row: RawMaterialResponse) {
     if (!confirm(`Excluir matéria-prima ID ${row.id}?`)) return;
 
     this.api.delete(row.id).subscribe({
       next: () => {
-        this.snack.open('Excluído com sucesso', 'OK', { duration: 2500 });
+        this.snack.open('Excluído com sucesso','OK', {
+          duration: 2500,
+          verticalPosition: 'top'
+        });
         const currentSearch = this.searchId.value.trim();
-        if (currentSearch) this.clearSearch();
-        else this.loadPage();
+        if (currentSearch) this.onClearSearch();
+        else this.onLoadPage();
       },
-      error: () => this.snack.open('Erro ao excluir', 'OK', { duration: 2500 })
+      error: (err) => {
+        const msg = err?.error?.message || 'Erro ao excluir';
+        this.snack.open(msg, 'OK', {
+          duration: 3000,
+          verticalPosition: 'top'
+        });
+      }
     });
   }
 }
