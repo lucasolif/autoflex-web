@@ -96,7 +96,8 @@ export class RawMaterialListComponent {
     if (!confirm(`Excluir matéria-prima ID ${row.id}?`)) return;
 
     this.api.delete(row.id).subscribe({
-      next: () => {
+      next: (res) => {
+        console.log('DELETE OK', row.id, res);
         this.snack.open('Excluído com sucesso','OK', {
           duration: 2500,
           verticalPosition: 'top'
