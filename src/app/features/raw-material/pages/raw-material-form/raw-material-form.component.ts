@@ -36,6 +36,34 @@ export class RawMaterialFormComponent {
     stockQuantity: [0, [Validators.required]]
   });
 
+  constructor() {
+    const idParam = this.route.snapshot.paramMap.get('id');
+
+    if (idParam) {
+      const id = Number(idParam);
+      if (!Number.isNaN(id)) {
+        this.id = id;
+
+        this.api.getById(id).subscribe({
+          next: (item) => {
+            this.form.patchValue({
+              code: item.code,
+              name: item.name,
+              stockQuantity: item.stockQuantity,
+            });
+          },
+          error: () => {
+            this.snack.open('Matéria-prima não encontrada.', 'OK', {
+              duration: 2500,
+              verticalPosition: 'top'
+            });
+            this.router.navigate(['/raw-material/list']);
+          }
+        });
+      }
+    }
+  }
+
   onSave() {
     if (this.form.invalid) return;
 

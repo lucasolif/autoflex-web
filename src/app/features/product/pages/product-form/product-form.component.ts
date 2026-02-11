@@ -57,6 +57,57 @@ export class ProductFormComponent {
   rawMaterialIdCtrl = new FormControl<number | null>(null, { validators: [Validators.required] });
   qtyRequiredCtrl = new FormControl<number | null>(null, { validators: [Validators.required, Validators.min(0.000001)] });
 
+  constructor() {
+    this.loadRawMaterialsCatalog();
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam) {
+      const id = Number(idParam);
+      if (!Number.isNaN(id)) {
+        this.id = id;
+        this.loadProductForEdit(id);
+      }
+    }
+  }
+
+  private loadRawMaterialsCatalog() {
+    this.rawApi.list(0, 999, 'name,asc').subscribe({
+      next: (page) => this.rawMaterialsCatalog = page.content,
+      error: () => this.rawMaterialsCatalog = []
+    });
+  }
+
+  private loadProductForEdit(id: number) {
+    this.productApi.getById(id).subscribe({
+      next: (p: ProductResponse) => {
+        this.form.patchValue({
+          code: (p as any).code,
+          name: (p as any).name,
+          price: (p as any).price
+        });
+
+        const rms = ((p as any).rawMaterials ?? []) as Array<any>;
+
+        this.rawMaterials = rms.map(rm => {
+          const catalogName =
+            this.rawMaterialsCatalog.find(x => x.id === rm.rawMaterialId)?.name;
+
+          return {
+            rawMaterialId: Number(rm.rawMaterialId),
+            rawMaterialName: rm.rawMaterialName ?? catalogName ?? `RM ${rm.rawMaterialId}`,
+            quantityRequired: Number(rm.quantityRequired),
+          } satisfies ProductRmVM;
+        });
+      },
+      error: () => {
+        this.snack.open('Produto não encontrado.', 'OK', {
+          duration: 2500,
+          verticalPosition: 'top'
+        });
+        this.router.navigate(['/product/list']);
+      }
+    });
+  }
+
   addRawMaterial() {
     if (this.rawMaterialIdCtrl.invalid || this.qtyRequiredCtrl.invalid) return;
 
