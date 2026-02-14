@@ -12,14 +12,18 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(req: LoginRequest) {
-    return this.http.post<TokenResponse>(`${environment.apiUrl}/auth/login`, req).pipe(
-      tap(res => localStorage.setItem(this.KEY, res.accessToken))
+  login(request: LoginRequest) {
+    return this.http.post<TokenResponse>(`${environment.apiUrl}/auth/login`, request).pipe(
+      tap(response => localStorage.setItem(this.KEY, response.accessToken))
     );
   }
 
   logout() {
     localStorage.removeItem(this.KEY);
+  }
+
+  setToken(token: string) {
+    localStorage.setItem('access_token', token);
   }
 
   getToken(): string | null {
@@ -29,4 +33,5 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
 }

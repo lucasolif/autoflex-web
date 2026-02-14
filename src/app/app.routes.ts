@@ -9,14 +9,21 @@ export const routes: Routes = [
       import('./auth/login/login.component').then(m => m.LoginComponent),
     title: 'Login',
   },
-
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'login'
+  },
   {
     path: '',
     component: ShellComponent,
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: '', pathMatch: 'full' },
-
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'raw-material/list'
+      },
       {
         path: 'raw-material/list',
         loadComponent: () =>
@@ -70,5 +77,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: '' },
+  { path: '**', redirectTo: 'login' },
 ];

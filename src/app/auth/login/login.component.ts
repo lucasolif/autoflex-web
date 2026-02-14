@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component,NgZone, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
@@ -16,6 +16,7 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private zone = inject(NgZone);
 
   loading = false;
   error = '';
@@ -30,16 +31,21 @@ export class LoginComponent {
 
     this.loading = true;
     this.error = '';
+    const payload = this.form.getRawValue();
 
-    this.auth.login(this.form.getRawValue() as any).subscribe({
-      next: () => {
-        const returnUrl =
-          this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';
-        this.router.navigateByUrl(returnUrl);
+    this.auth.login(payload as any).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.auth.setToken(response.accessToken);
+
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+        const target = returnUrl && returnUrl !== '/login' ? returnUrl : '/raw-material/list';
+
+        this.router.navigateByUrl(target);
       },
       error: () => {
-        this.error = 'Usuário ou senha inválidos.';
         this.loading = false;
+        this.error = 'Usuário ou senha inválidos.';
       },
     });
   }
